@@ -1,4 +1,4 @@
-name: Java CI with Maven
+name: Ultimate Java CI/CD Pipeline
 
 on:
   push:
@@ -17,18 +17,29 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Set up JDK 17
+    # BÀI 6: Cài đặt JDK 17 và kích hoạt Cache Maven [cite: 359-362, 596]
+    - name: Set up JDK 17 with Maven Cache
       uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
         cache: 'maven'
 
-    - name: Build and Test with Maven
+    # Bước này chạy Compile, Test, Checkstyle và JaCoCo
+    - name: Build and Verify with Maven
       run: mvn clean verify
 
-    - name: Upload Build Artifact
+    # BÀI 3 & 8: Lưu trữ file .jar thực thi [cite: 389-392, 578]
+    - name: Upload Executable JAR Artifact
       uses: actions/upload-artifact@v4
       with:
         name: test-project-jar-${{ matrix.os }}
         path: target/*.jar
+        if-no-files-found: error
+
+    # BÀI 5: Lưu trữ báo cáo JaCoCo (Test Coverage) [cite: 587-593]
+    - name: Upload JaCoCo Coverage Report
+      uses: actions/upload-artifact@v4
+      with:
+        name: jacoco-report-${{ matrix.os }}
+        path: target/site/jacoco/
