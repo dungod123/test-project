@@ -1,6 +1,5 @@
 name: Java CI with Maven
 
-# BÀI 3: Kích hoạt robot khi có ai đó push code hoặc tạo Pull Request [cite: 344, 576, 602]
 on:
   push:
     branches: [ "main" ]
@@ -9,31 +8,27 @@ on:
 
 jobs:
   build:
-    # BÀI 4: Matrix Strategy - Chạy song song trên 3 hệ điều hành [cite: 381, 582]
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        [cite_start]os: [ubuntu-latest, windows-latest, macos-latest] # Robot sẽ phân thân làm 3 [cite: 381, 582]
+        os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
-    # Bước 1: Lấy mã nguồn của cậu từ GitHub về máy ảo của robot [cite: 349]
-    - uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-    # Bước 2 & BÀI 6: Cài đặt Java 17 và dùng Cache để tăng tốc độ build [cite: 350, 362, 596]
     - name: Set up JDK 17
       uses: actions/setup-java@v3
       with:
         java-version: '17'
         distribution: 'temurin'
-        [cite_start]cache: 'maven' # Giúp robot không phải tải lại thư viện từ đầu ở lần sau [cite: 362, 596]
+        cache: 'maven'
 
-    # Bước 3: Chạy toàn bộ quy trình: Dịch code, Checkstyle, và chạy Test [cite: 353, 577]
     - name: Build and Test with Maven
-      [cite_start]run: mvn clean verify # Lệnh verify sẽ chạy cả test và checkstyle [cite: 592]
+      run: mvn clean verify
 
-    # BÀI 3 & 8: Lưu trữ file .jar sau khi build xong (Artifacts) [cite: 389-392, 578]
     - name: Upload Build Artifact
       uses: actions/upload-artifact@v3
       with:
-        [cite_start]name: test-project-jar-${{ matrix.os }} # Tên file lưu trên GitHub [cite: 391]
-        [cite_start]path: target/*.jar # Chỉ định file cần giữ lại [cite: 392, 578]
+        name: test-project-jar-${{ matrix.os }}
+        path: target/*.jar
